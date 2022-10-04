@@ -1,52 +1,36 @@
 from dataclasses import field
 from wsgiref.validate import validator
 from rest_framework import serializers
-from movies.models import Movie
-import re
+from movies.models import WatchList, StreamPlatform
 
-
-class MovieSerializer(serializers.ModelSerializer):
-
-    len_name = serializers.SerializerMethodField()
+class WatchListSerializer(serializers.ModelSerializer):    
 
     class Meta:
-        model = Movie
+        model = WatchList
         fields = '__all__'
-        #fields = ['id', 'name', 'description']
-        #exclude = ['active']
-        
 
-    def get_len_name(self, object):
-        length = len(object.name)
-        return length
 
-    def validate(self, data):
-        """
-        Check that start is before finish.
-        """
-        if data['name'] == data['description']:
-            raise serializers.ValidationError("Name and description can't be the same!")
-        return data
 
-    def validate_name(self, value):
-        """
-        Check that the movie name is too short.
-        """
-        if len(value) < 2:
-            raise serializers.ValidationError("Name is too short!")
-        #return value
-        
+class StreamPlatformSerializer(serializers.ModelSerializer):
 
-        """
-         Check if a string contains cyrillic characters
-        """
-        if bool(re.search('[\u0400-\u04FF]', value)):
-            raise serializers.ValidationError("Name contains cyrillic character!") 
-            
+    #watchlist = WatchListSerializer(many=True, read_only=True)
+    # watchlist = serializers.StringRelatedField(many=True)
+    # watchlist = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    watchlist = serializers.HyperlinkedRelatedField(
+        many=True,
+        read_only=True,
+        view_name='movie-detail'
+    )
 
-            
+    class Meta:
+        model = StreamPlatform
+        fields = '__all__'
 
-# import re
+
+
+
+
+    
 
 # def check_cyrillic(value):
 #     """
