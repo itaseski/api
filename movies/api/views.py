@@ -31,6 +31,7 @@ class MovieList(APIView):
         else:
             return Response(serializer.errors)
 
+
 class MovieDetail(APIView):
     """
     Return a movie detailes.
